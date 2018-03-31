@@ -1,0 +1,5 @@
+dependencies {
+	compile project(":scribe:libscribe")
+	compile 'com.google.cloud:google-cloud-speech:0.32.0-alpha'
+	compile group: 'io.grpc', name: 'grpc-netty-shaded', version: '1.11.0'
+}

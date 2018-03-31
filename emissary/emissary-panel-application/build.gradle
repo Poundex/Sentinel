@@ -1,0 +1,12 @@
+mainClassName = "net.poundex.sentinel.emissary.panel.EmissaryPanelApplication"
+
+dependencies {
+	compile group: 'eu.hansolo', name: 'tilesfx', version: '1.5.2'
+}
+
+task runTilesDemo(type: JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	main = "eu.hansolo.tilesfx.Demo"
+}
+
+[run,runTilesDemo]*.setExecutable("/usr/lib/jvm/java-9-jdk/bin/java")

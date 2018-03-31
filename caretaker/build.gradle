@@ -1,0 +1,23 @@
+allprojects {
+	group "net.poundex.sentinel.caretaker"
+	version "0.1.0-SNAPSHOT"
+}
+
+subprojects {
+	apply plugin: "java"
+	apply plugin: "groovy"
+
+	repositories {
+		mavenLocal()
+		jcenter()
+		maven { url 'http://oss.jfrog.org/artifactory/libs-snapshot' }
+	}
+
+	if(project.name != 'caretaker-server')
+		dependencies {
+			compile group: 'org.codehaus.groovy', name: 'groovy', version: groovyVersion, classifier: 'indy'
+			compile group: 'org.springframework', name: 'spring-context', version: '5.0.4.RELEASE'
+			testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+		}
+}
+

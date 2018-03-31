@@ -1,0 +1,16 @@
+mainClassName = "net.poundex.sentinel.emissary.desktop.EmissaryDesktopApplication"
+
+repositories {
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+//	compile 'com.github.groovyfx-project:groovyfx:e4d5f4184b'
+	compile project(":emissary:libemissary")
+	runtime project(":emissary:libemissary-pocketsphinx")
+}
+
+[run, test]*.systemProperty("java.library.path", System.properties['java.library.path'] + ":/home/poundex/workspaces/pounder/libpocketsphinxjava/lib")
+//[run, test]*.environment("LD_LIBRARY_PATH", "/usr/local/lib/")
+
+run.setExecutable("/usr/lib/jvm/java-9-jdk/bin/java")

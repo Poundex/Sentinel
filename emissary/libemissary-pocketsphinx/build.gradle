@@ -1,0 +1,9 @@
+dependencies {
+	compile project(":emissary:libemissary")
+	compile group: 'org.codehaus.groovy', name: 'groovy', version: groovyVersion
+	compile "edu.cmu.pocketsphinx:libpocketsphinxjava:master"
+
+	testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+}
+
+//[run, test]*.systemProperty("java.library.path", "/home/poundex/workspaces/pounder/libpocketsphinxjava/lib")

@@ -1,0 +1,11 @@
+repositories {
+//	maven { url 'https://jitpack.io' }
+	maven { url 'http://oss.jfrog.org/artifactory/libs-snapshot' }
+}
+
+dependencies {
+	compile group: 'tech.units', name: 'indriya', version: '1.1'
+	compile 'javax.measure:unit-api:2.0-SNAPSHOT'
+	compile group: 'systems.uom', name: 'systems-common-java8', version: '0.7.2'
+
+}

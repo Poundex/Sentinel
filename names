@@ -1,0 +1,30 @@
+Agent thing on devices and presences	-	Emissary
+Thing Emissary submits requests to 	-	Conduit
+Thing for controlling house things 	-	Caretaker
+
+Emissary
+	- libemissary
+	- libemissary-pocketsphinx
+	- emissary-application
+	- emissary-desktop-application
+	- emissary-panel-application
+
+Conduit
+	- libconduit
+	- libconduit-apiai
+	- conduit-application
+	
+Caretaker
+	- caretaker-application
+	- caretaker-soundandmusic
+	- caretaker-spotify
+	- caretaker-lighting
+	- caretaker-hue
+
+H: "Turn living room big lights on"
+==> emissary hears
+==> sends to speech recognition
+==> sends results to apiai*
+==> apiai calls conduit with result
+==> conduit calls caretaker to request the lights
+

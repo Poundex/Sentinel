@@ -1,0 +1,4 @@
+dependencies {
+	compile project(":vox:libvox")
+	compile group: 'com.amazonaws', name: 'aws-java-sdk-polly', version: '1.11.301'
+}
