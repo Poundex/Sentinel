@@ -8,8 +8,15 @@ import net.poundex.sentinel.caretaker.home.SensorPortValue
 @CompileStatic
 class Environment
 {
+	private final MonitorHandler monitorHandler
+
 	private final Map<Sensor, Map<Device, SensorPortValue>> portValuesByDeviceBySensor = [:]
 	private final Map<Sensor, Object> valuesBySensor = [:]
+
+	Environment(MonitorHandler monitorHandler)
+	{
+		this.monitorHandler = monitorHandler
+	}
 
 	void postValue(Sensor sensor, SensorPortValue sensorPortValue)
 	{
@@ -31,11 +38,6 @@ class Environment
 			return
 
 		valuesBySensor[sensor] = newSensorValue
-		fireSensorListener(sensor, newSensorValue)
-	}
-
-	void fireSensorListener(Sensor sensor, Object value)
-	{
-		println "${sensor} new: ${value}"
+		monitorHandler.publish(sensor, newSensorValue)
 	}
 }

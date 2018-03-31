@@ -3,7 +3,7 @@ package net.poundex.sentinel.caretaker.home.trigger
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-class BinaryTriggerSpec extends Specification implements DomainUnitTest<BinaryTrigger> {
+class BinaryConditionSpec extends Specification implements DomainUnitTest<BinaryCondition> {
 
     def setup() {
     }

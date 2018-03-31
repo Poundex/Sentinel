@@ -10,6 +10,7 @@ import net.poundex.sentinel.caretaker.home.trigger.Trigger
 abstract class AbstractPersistentSensor<T extends SensorPortValue> implements Sensor<T>
 {
 	PersistentRoom room
+	List<Trigger> triggers = []
 
 	static hasMany = [readers: SensorReader, triggers: Trigger]
 

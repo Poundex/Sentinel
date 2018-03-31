@@ -3,7 +3,7 @@ package net.poundex.sentinel.caretaker.home.trigger
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-class ValueTriggerSpec extends Specification implements DomainUnitTest<ValueTrigger> {
+class DummyActionSpec extends Specification implements DomainUnitTest<DummyAction> {
 
     def setup() {
     }

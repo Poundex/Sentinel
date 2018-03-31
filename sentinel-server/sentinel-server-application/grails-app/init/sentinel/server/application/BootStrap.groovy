@@ -2,17 +2,12 @@ package sentinel.server.application
 
 import grails.converters.JSON
 import net.poundex.sentinel.caretaker.environment.PersistentRoom
-import net.poundex.sentinel.caretaker.home.DeviceManager
-import net.poundex.sentinel.caretaker.home.EnvironmentService
-import net.poundex.sentinel.caretaker.home.OccupancyMonitor
-import net.poundex.sentinel.caretaker.home.SensorReader
-import net.poundex.sentinel.caretaker.home.SensorRole
-import net.poundex.sentinel.caretaker.home.TemperatureSensor
-import net.poundex.sentinel.caretaker.home.ValueSensor
+import net.poundex.sentinel.caretaker.home.*
 import net.poundex.sentinel.caretaker.home.heating.nest.NestReportingSensorDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestThermostat
-import net.poundex.sentinel.caretaker.home.trigger.BinaryTrigger
-import net.poundex.sentinel.caretaker.home.trigger.ValueTrigger
+import net.poundex.sentinel.caretaker.home.trigger.DummyAction
+import net.poundex.sentinel.caretaker.home.trigger.Trigger
+import net.poundex.sentinel.caretaker.home.trigger.ValueCondition
 import net.poundex.sentinel.caretaker.zwave.ZWaveModem
 import net.poundex.sentinel.caretaker.zwave.ZWaveModemDevice
 import net.poundex.sentinel.caretaker.zwave.ZWaveSensorDevice
@@ -72,14 +67,21 @@ class BootStrap
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
 			    portId: ZWaveModemDevice.PORT_MULTILEVEL_HUMIDITY)
 
-	    save new ValueTrigger(
+	    Trigger dummy1 = save new Trigger<>(
 			    sensor: livingRoomTempMon,
-			    valueTriggerType: ValueTrigger.ValueTriggerType.GREATER_THAN,
-			    triggerValue: 20)
+			    actions: [ new DummyAction(name: 'ACTION TRIGGERED: Living Room Temp > 20') ]),
+			    true
 
-	    save new BinaryTrigger(
-			    sensor: livingRoomOccupancyMon,
-			    triggerValue: true)
+	    save new ValueCondition(
+			    trigger: dummy1,
+			    valueTriggerType: ValueCondition.ValueTriggerType.GREATER_THAN,
+			    triggerValue: 20),
+			    true
+
+
+//	    save new BinaryCondition(
+//			    sensor: livingRoomOccupancyMon,
+//			    triggerValue: true)
 
 	    deviceManager.refresh()
 	    println deviceManager.getDevices()

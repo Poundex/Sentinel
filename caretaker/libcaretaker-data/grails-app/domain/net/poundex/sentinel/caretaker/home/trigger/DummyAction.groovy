@@ -3,10 +3,8 @@ package net.poundex.sentinel.caretaker.home.trigger
 import grails.compiler.GrailsCompileStatic
 
 @GrailsCompileStatic
-class BinaryTrigger extends Trigger<Boolean>
+class DummyAction extends Action
 {
-	Boolean triggerValue
-
-    static constraints = {
-    }
+	static constraints = {
+	}
 }
