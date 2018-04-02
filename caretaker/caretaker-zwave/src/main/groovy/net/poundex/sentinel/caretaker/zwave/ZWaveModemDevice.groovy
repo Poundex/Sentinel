@@ -61,6 +61,12 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 		return createDeviceId(hardware)
 	}
 
+	@Override
+	void setControlValues(Map<String, Object> portValues)
+	{
+
+	}
+
 	static String createDeviceId(ZWaveModem controller)
 	{
 		return "zwave:${controller.modemDevice}:controller"

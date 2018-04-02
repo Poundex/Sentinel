@@ -17,6 +17,6 @@ class BinaryCondition extends Condition<Boolean>
 	@Override
 	boolean isTriggeredBy(Object value)
 	{
-		return (boolean) value
+		return ((boolean) value) == triggerValue
 	}
 }

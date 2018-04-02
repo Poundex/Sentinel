@@ -45,6 +45,7 @@ include ":caretaker:caretaker-server"
 include ":caretaker:caretaker-client"
 include ":caretaker:caretaker-nest"
 include ":caretaker:caretaker-zwave"
+include ":caretaker:caretaker-hue"
 
 include ":sentinel-server:libserver"
 include ":sentinel-server:sentinel-server-application"

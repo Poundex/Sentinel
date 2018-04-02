@@ -54,6 +54,7 @@ dependencies {
 
     runtime project(":caretaker:caretaker-nest")
     runtime project(":caretaker:caretaker-zwave")
+    runtime project(":caretaker:caretaker-hue")
 
     console "org.grails:grails-console"
     profile "org.grails.profiles:rest-api-plugin"

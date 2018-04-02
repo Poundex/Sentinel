@@ -9,14 +9,15 @@ import net.poundex.sentinel.caretaker.home.trigger.Trigger
 @CompileStatic
 class EnvironmentService implements MonitorHandler
 {
-	private final ActionService actionService
+//	private final ActionService actionService
 
 	private final Map<Trigger, Boolean> alreadyTriggered = [:]
 
-	EnvironmentService(ActionService actionService)
-	{
-		this.actionService = actionService
-	}
+//	EnvironmentService(ActionService actionService)
+//	{
+//		this.actionService = actionService
+//	}
+
 	private Map<Room, Environment> map = [:]
 
 	Environment getEnvironment(Room room)
@@ -48,4 +49,6 @@ class EnvironmentService implements MonitorHandler
 			t.actions.each(actionService.&runAction)
 		}
 	}
+
+//	void setControlValues(
 }

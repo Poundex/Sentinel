@@ -10,10 +10,23 @@ import net.poundex.sentinel.caretaker.home.trigger.DummyAction
 @Slf4j
 class ActionService
 {
+//	private final DeviceManager deviceManager
+	private final EnvironmentService environmentService
+
 	private final Map<Class<? extends Action>, Closure> actionHandlers = [
 			(DummyAction): this.&runDummyAction,
 			(ControlApplianceAction): this.&runApplianceAction
 	]
+
+//	ActionService(DeviceManager deviceManager)
+//	{
+//		this.deviceManager = deviceManager
+//	}
+
+	ActionService(EnvironmentService environmentService)
+	{
+		this.environmentService = environmentService
+	}
 
 	void runAction(Action action)
 	{
@@ -33,6 +46,6 @@ class ActionService
 
 	private void runApplianceAction(ControlApplianceAction controlApplianceAction)
 	{
-		println "Doing ${controlApplianceAction.controlValue} => ${controlApplianceAction.portId} @ ${controlApplianceAction.appliance}"
+//		environmentService.setApplianceValues(controlApplianceAction)
 	}
 }

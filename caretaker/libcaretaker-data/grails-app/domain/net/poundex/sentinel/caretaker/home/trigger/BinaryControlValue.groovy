@@ -1,6 +1,6 @@
 package net.poundex.sentinel.caretaker.home.trigger
 
-class BinaryControlApplienceAction extends ControlApplianceAction<Boolean>
+class BinaryControlValue extends ApplianceControlValue<Boolean>
 {
 	Boolean controlValue
 

@@ -28,4 +28,10 @@ class ZWaveNodeDevice implements Device
 	{
 		return hardware
 	}
+
+	@Override
+	void setControlValues(Map<String, Object> portValues)
+	{
+
+	}
 }

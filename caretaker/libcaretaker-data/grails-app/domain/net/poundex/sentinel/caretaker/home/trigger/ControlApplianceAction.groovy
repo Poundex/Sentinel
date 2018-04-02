@@ -2,11 +2,10 @@ package net.poundex.sentinel.caretaker.home.trigger
 
 import net.poundex.sentinel.caretaker.home.AbstractPersistentAppliance
 
-abstract class ControlApplianceAction<T> extends Action
+class ControlApplianceAction extends Action
 {
 	AbstractPersistentAppliance appliance
-	String portId
-	abstract T getControlValue()
+	static hasMany = [controlValues: ApplianceControlValue]
 
 	static constraints = {
 	}

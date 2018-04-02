@@ -1,15 +1,18 @@
 package sentinel.server.application
 
 import grails.converters.JSON
+import net.poudnex.sentinel.caretaker.home.lighting.hue.HueBulbDevice
 import net.poundex.sentinel.caretaker.environment.PersistentRoom
 import net.poundex.sentinel.caretaker.home.*
 import net.poundex.sentinel.caretaker.home.heating.nest.NestHeatingControllerDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestReportingSensorDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestThermostat
-import net.poundex.sentinel.caretaker.home.trigger.BinaryControlApplienceAction
+import net.poundex.sentinel.caretaker.home.trigger.BinaryControlValue
+import net.poundex.sentinel.caretaker.home.trigger.ControlApplianceAction
 import net.poundex.sentinel.caretaker.home.trigger.DummyAction
 import net.poundex.sentinel.caretaker.home.trigger.Trigger
 import net.poundex.sentinel.caretaker.home.trigger.ValueCondition
+import net.poundex.sentinel.caretaker.ligting.hue.HueBridge
 import net.poundex.sentinel.caretaker.zwave.ZWaveModem
 import net.poundex.sentinel.caretaker.zwave.ZWaveModemDevice
 import net.poundex.sentinel.caretaker.zwave.ZWaveSensorDevice
@@ -76,11 +79,16 @@ class BootStrap
 	    Trigger dummy1 = save new Trigger<>(
 			    sensor: livingRoomTempMon,
 			    actions: [ new DummyAction(name: 'ACTION TRIGGERED: Living Room Temp > 20'),
-			    new BinaryControlApplienceAction(
+			    new ControlApplianceAction(
 					    name: 'Turn on',
-					    controlValue: true,
+//					    controlValue: true,
 					    appliance: heatingController,
-					    portId: "PORT_BINARY_APPLIANCE_POWER"
+//					    portId: "PORT_BINARY_APPLIANCE_POWER",
+					    controlValues: [
+							    new BinaryControlValue(
+									    portId: "PORT_BINARY_APPLIANCE_POWER",
+									    controlValue: true)
+					    ]
 			    )]),
 			    true
 
@@ -95,8 +103,25 @@ class BootStrap
 //			    sensor: livingRoomOccupancyMon,
 //			    triggerValue: true)
 
+	    HueBridge hueBridge = save new HueBridge(
+			    name: "Hue Bridge",
+			    bridgeAddress: "192.168.0.22",
+			    bridgeUsername: StupidSecretsProvider.instance.secrets.hue.bridgeUser)
+
+
 	    deviceManager.refresh()
 	    println deviceManager.getDevices()
+
+//	    deviceManager.getDevice(
+//			    HueBulbDevice.createDeviceId(hueBridge, "2"),
+//			    HueBulbDevice
+//	    ).with {
+//		    setControlValues(null, true)
+//		    Thread.startDaemon {
+//			    Thread.sleep(3000)
+//			    setControlValues(null, false)
+//		    }
+//	    }
     }
 
     def destroy = {
