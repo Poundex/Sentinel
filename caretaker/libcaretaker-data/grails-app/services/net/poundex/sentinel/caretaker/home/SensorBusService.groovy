@@ -15,7 +15,7 @@ class SensorBusService implements SensorBus
 	@Override
 	void publish(SensorPortValue sensorValue)
 	{
-		println "publish: ${sensorValue}"
+		log.debug("Received value to publish ${sensorValue}")
 		SensorReader.withNewSession {
 			List<SensorReader> readers = SensorReader.findAllByDeviceIdAndPortId(
 					sensorValue.sourceDevice.deviceId,

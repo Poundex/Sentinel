@@ -6,4 +6,8 @@ import grails.compiler.GrailsCompileStatic
 abstract class Action
 {
 	String name
+
+	static mapping = {
+		tablePerHierarchy false
+	}
 }

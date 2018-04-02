@@ -3,8 +3,10 @@ package sentinel.server.application
 import grails.converters.JSON
 import net.poundex.sentinel.caretaker.environment.PersistentRoom
 import net.poundex.sentinel.caretaker.home.*
+import net.poundex.sentinel.caretaker.home.heating.nest.NestHeatingControllerDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestReportingSensorDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestThermostat
+import net.poundex.sentinel.caretaker.home.trigger.BinaryControlApplienceAction
 import net.poundex.sentinel.caretaker.home.trigger.DummyAction
 import net.poundex.sentinel.caretaker.home.trigger.Trigger
 import net.poundex.sentinel.caretaker.home.trigger.ValueCondition
@@ -25,6 +27,7 @@ class BootStrap
 	    ApplicationContext ctx = servletContext.getAttribute("org.springframework.web.context.WebApplicationContext.ROOT")
 		DeviceManager deviceManager = ctx.getBean(DeviceManager)
 	    EnvironmentService environmentService = ctx.getBean(EnvironmentService)
+	    SensorBusService sbs = ctx.getBean(SensorBusService)
 
 	    PersistentRoom livingRoom = save new PersistentRoom(name: "Living Room")
 
@@ -37,6 +40,9 @@ class BootStrap
 			    name: "ZWave Controller 1",
 			    modemDevice: "/dev/ttyACM0",
 	    )
+
+	    HeatingController heatingController = save new HeatingController(
+			    deviceId: NestHeatingControllerDevice.createDeviceId(nestThermostat))
 
 	    TemperatureSensor livingRoomTempMon = save new TemperatureSensor(room: livingRoom)
 	    ValueSensor livingRoomHumidMod = save new ValueSensor(room: livingRoom)
@@ -69,7 +75,13 @@ class BootStrap
 
 	    Trigger dummy1 = save new Trigger<>(
 			    sensor: livingRoomTempMon,
-			    actions: [ new DummyAction(name: 'ACTION TRIGGERED: Living Room Temp > 20') ]),
+			    actions: [ new DummyAction(name: 'ACTION TRIGGERED: Living Room Temp > 20'),
+			    new BinaryControlApplienceAction(
+					    name: 'Turn on',
+					    controlValue: true,
+					    appliance: heatingController,
+					    portId: "PORT_BINARY_APPLIANCE_POWER"
+			    )]),
 			    true
 
 	    save new ValueCondition(

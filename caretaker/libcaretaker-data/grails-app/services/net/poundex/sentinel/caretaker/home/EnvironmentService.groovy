@@ -11,7 +11,7 @@ class EnvironmentService implements MonitorHandler
 {
 	private final ActionService actionService
 
-	private final Map<Trigger, Boolean> lastCouldRun = [:]
+	private final Map<Trigger, Boolean> alreadyTriggered = [:]
 
 	EnvironmentService(ActionService actionService)
 	{
@@ -36,11 +36,12 @@ class EnvironmentService implements MonitorHandler
 	void publish(Sensor sensor, Object value)
 	{
 		sensor.triggers.each { t ->
+			boolean triggered = alreadyTriggered[t]
 			boolean couldRun = t.conditions.every { c -> c.isTriggeredBy(value) }
-			if(couldRun && lastCouldRun[t])
-				return
+			alreadyTriggered[t] = couldRun
 
-			lastCouldRun[t] = couldRun
+			if(triggered && couldRun)
+				return
 			if( ! couldRun)
 				return
 

@@ -7,6 +7,6 @@ abstract class Condition<T>
 	static belongsTo = [trigger: Trigger]
 
 	static mapping = {
-		tablerPerHierarchy false
+		tablePerHierarchy false
 	}
 }

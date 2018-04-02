@@ -1,10 +1,12 @@
 package net.poundex.sentinel.caretaker.environment
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import net.poundex.sentinel.caretaker.home.Device
 import net.poundex.sentinel.caretaker.home.Sensor
 import net.poundex.sentinel.caretaker.home.SensorPortValue
 
+@Slf4j
 @CompileStatic
 class Environment
 {
@@ -38,6 +40,7 @@ class Environment
 			return
 
 		valuesBySensor[sensor] = newSensorValue
+		log.debug("Monitor ${sensor} has new value ${newSensorValue}")
 		monitorHandler.publish(sensor, newSensorValue)
 	}
 }

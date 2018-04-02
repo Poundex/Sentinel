@@ -23,6 +23,7 @@ class ValueSensor<T extends ValueSensorValue> extends AbstractPersistentSensor<T
 	@Override
 	Object aggregate(Collection<? extends T> sensorPortValues)
 	{
-		ValueAggregator.NEWEST_VALUE_WINS.aggregate(sensorPortValues)
+		return ValueAggregator.AVERAGE.aggregate(sensorPortValues)
+//		ValueAggregator.NEWEST_VALUE_WINS.aggregate(sensorPortValues)
 	}
 }
