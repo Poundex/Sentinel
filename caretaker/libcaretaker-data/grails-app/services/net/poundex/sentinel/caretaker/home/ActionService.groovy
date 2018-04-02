@@ -5,27 +5,27 @@ import groovy.util.logging.Slf4j
 import net.poundex.sentinel.caretaker.home.trigger.Action
 import net.poundex.sentinel.caretaker.home.trigger.ControlApplianceAction
 import net.poundex.sentinel.caretaker.home.trigger.DummyAction
+import org.springframework.beans.factory.annotation.Qualifier
+
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
 
 @CompileStatic
 @Slf4j
 class ActionService
 {
-//	private final DeviceManager deviceManager
-	private final EnvironmentService environmentService
-
+	private final DeviceManager deviceManager
+	private final ThreadPoolExecutor pool
 	private final Map<Class<? extends Action>, Closure> actionHandlers = [
 			(DummyAction): this.&runDummyAction,
 			(ControlApplianceAction): this.&runApplianceAction
 	]
 
-//	ActionService(DeviceManager deviceManager)
-//	{
-//		this.deviceManager = deviceManager
-//	}
-
-	ActionService(EnvironmentService environmentService)
+	ActionService(DeviceManager deviceManager,
+	              @Qualifier("caretakerWorkerPool") ThreadPoolExecutor pool)
 	{
-		this.environmentService = environmentService
+		this.deviceManager = deviceManager
+		this.pool = pool
 	}
 
 	void runAction(Action action)
@@ -41,11 +41,19 @@ class ActionService
 
 	private void runDummyAction(DummyAction dummyAction)
 	{
-		log.info("Dummy Action! ${dummyAction}")
+		pool.execute {
+			log.info("Dummy Action! ${dummyAction}")
+		}
 	}
 
 	private void runApplianceAction(ControlApplianceAction controlApplianceAction)
 	{
-//		environmentService.setApplianceValues(controlApplianceAction)
+		pool.execute {
+			log.info("Device Action: ${controlApplianceAction}")
+			ControllableDevice device = deviceManager.getDevice(controlApplianceAction.appliance.deviceId, ControllableDevice)
+			device.setPortValues(controlApplianceAction.controlValues.collectEntries {
+				[it.portId, it.controlValue]
+			})
+		}
 	}
 }

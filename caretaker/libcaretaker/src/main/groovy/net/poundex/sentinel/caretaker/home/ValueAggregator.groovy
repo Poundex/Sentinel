@@ -6,15 +6,15 @@ import tec.units.indriya.quantity.Quantities
 @CompileStatic
 enum ValueAggregator
 {
-	AVERAGE({ Collection<ValueSensorValue> it ->
+	AVERAGE({ Collection<QuantityPortValue> it ->
 		Quantities.getQuantity(
 				(Number) it.collect { it.value.value }.sum() / it.size(),
 				it.first().value.unit)}),
-	BINARY_ANY({ Collection<BinarySensorValue> it ->
+	BINARY_ANY({ Collection<BinaryPortValue> it ->
 		it*.value.any()
 	}),
 
-	NEWEST_VALUE_WINS({ Collection<ValueSensorValue> values ->
+	NEWEST_VALUE_WINS({ Collection<QuantityPortValue> values ->
 		values.max { it.reportTime }.value
 	})
 
@@ -25,7 +25,7 @@ enum ValueAggregator
 		this.function = function
 	}
 
-	Object aggregate(Collection<? extends SensorPortValue> values)
+	public <T> T aggregate(Collection<PortValue<T>> values)
 	{
 		return function(values)
 	}

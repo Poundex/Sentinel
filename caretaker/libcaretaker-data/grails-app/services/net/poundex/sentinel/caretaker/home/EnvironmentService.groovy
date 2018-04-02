@@ -9,14 +9,16 @@ import net.poundex.sentinel.caretaker.home.trigger.Trigger
 @CompileStatic
 class EnvironmentService implements MonitorHandler
 {
-//	private final ActionService actionService
+	private final ActionService actionService
+//	private final DataBus dataBus
 
 	private final Map<Trigger, Boolean> alreadyTriggered = [:]
 
-//	EnvironmentService(ActionService actionService)
-//	{
-//		this.actionService = actionService
-//	}
+	EnvironmentService(ActionService actionService, DataBus dataBus)
+	{
+		this.actionService = actionService
+		dataBus.addPortValueAnnouncementListener(this.&publishReadingToMonitor)
+	}
 
 	private Map<Room, Environment> map = [:]
 
@@ -28,15 +30,18 @@ class EnvironmentService implements MonitorHandler
 		return map[room]
 	}
 
-	void publishSensorReading(Sensor sensor, SensorPortValue value)
+	public <T> void publishReadingToMonitor(Monitor<T> monitor, PortValue<?> portValue)
 	{
-		getEnvironment(sensor.room).postValue(sensor, value)
+		PortValue<T> readValue = monitor.readPortValue(portValue)
+		if( ! readValue)
+			return
+		getEnvironment(monitor.room).publishReadingToMonitor(monitor, readValue)
 	}
 
 	@Override
-	void publish(Sensor sensor, Object value)
+	public <T> void updateMonitorValue(Monitor<T> monitor, T value)
 	{
-		sensor.triggers.each { t ->
+		monitor.triggers.each { t ->
 			boolean triggered = alreadyTriggered[t]
 			boolean couldRun = t.conditions.every { c -> c.isTriggeredBy(value) }
 			alreadyTriggered[t] = couldRun
@@ -46,6 +51,9 @@ class EnvironmentService implements MonitorHandler
 			if( ! couldRun)
 				return
 
+//			t.actions.each {
+//				println "Would run action ${it}"
+//			}
 			t.actions.each(actionService.&runAction)
 		}
 	}

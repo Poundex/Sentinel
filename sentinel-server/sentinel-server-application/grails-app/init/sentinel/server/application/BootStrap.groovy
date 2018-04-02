@@ -7,7 +7,9 @@ import net.poundex.sentinel.caretaker.home.*
 import net.poundex.sentinel.caretaker.home.heating.nest.NestHeatingControllerDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestReportingSensorDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestThermostat
+import net.poundex.sentinel.caretaker.home.trigger.BinaryCondition
 import net.poundex.sentinel.caretaker.home.trigger.BinaryControlValue
+import net.poundex.sentinel.caretaker.home.trigger.Condition
 import net.poundex.sentinel.caretaker.home.trigger.ControlApplianceAction
 import net.poundex.sentinel.caretaker.home.trigger.DummyAction
 import net.poundex.sentinel.caretaker.home.trigger.Trigger
@@ -22,15 +24,15 @@ import org.springframework.context.ApplicationContext
 
 class BootStrap
 {
-    def init = { servletContext ->
-        JSON.registerObjectMarshaller(Enum) { Enum it ->
-            return it.name()
+	def init = { servletContext ->
+	    JSON.registerObjectMarshaller(Enum) { Enum it ->
+	        return it.name()
         }
 
 	    ApplicationContext ctx = servletContext.getAttribute("org.springframework.web.context.WebApplicationContext.ROOT")
-		DeviceManager deviceManager = ctx.getBean(DeviceManager)
+	    DeviceManager deviceManager = ctx.getBean(DeviceManager)
 	    EnvironmentService environmentService = ctx.getBean(EnvironmentService)
-	    SensorBusService sbs = ctx.getBean(SensorBusService)
+	    DataBusService sbs = ctx.getBean(DataBusService)
 
 	    PersistentRoom livingRoom = save new PersistentRoom(name: "Living Room")
 
@@ -41,55 +43,48 @@ class BootStrap
 
 	    ZWaveModem zWaveController = save new ZWaveModem(
 			    name: "ZWave Controller 1",
-			    modemDevice: "/dev/ttyACM0",
-	    )
+			    modemDevice: "/dev/ttyACM0")
+
+		HueBridge hueBridge = save new HueBridge(
+				name: "Hue Bridge",
+				bridgeAddress: "192.168.0.22",
+				bridgeUsername: StupidSecretsProvider.instance.secrets.hue.bridgeUser)
 
 	    HeatingController heatingController = save new HeatingController(
 			    deviceId: NestHeatingControllerDevice.createDeviceId(nestThermostat))
 
-	    TemperatureSensor livingRoomTempMon = save new TemperatureSensor(room: livingRoom)
-	    ValueSensor livingRoomHumidMod = save new ValueSensor(room: livingRoom)
-	    OccupancyMonitor livingRoomOccupancyMon = save new OccupancyMonitor(room: livingRoom)
+	    QuantityMonitor livingRoomTempMon = save new QuantityMonitor(room: livingRoom)
+	    QuantityMonitor livingRoomHumidMod = save new QuantityMonitor(room: livingRoom)
+	    BinaryMonitor livingRoomOccupancyMon = save new BinaryMonitor(room: livingRoom)
 
 	    save new SensorReader(
-			    sensor: livingRoomTempMon,
+			    monitor: livingRoomTempMon,
 			    deviceId: NestReportingSensorDevice.createDeviceId(nestThermostat),
 			    portId: NestReportingSensorDevice.PORT_TEMPERATURE_C)
 
 	    save new SensorReader(
-			    sensor: livingRoomHumidMod,
+			    monitor: livingRoomHumidMod,
 			    deviceId: NestReportingSensorDevice.createDeviceId(nestThermostat),
 			    portId: NestReportingSensorDevice.PORT_HUMIDITY)
 
 	    save new SensorReader<>(
-			    sensor: livingRoomTempMon,
+			    monitor: livingRoomTempMon,
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
 			    portId: ZWaveModemDevice.PORT_MULTILEVEL_TEMPERATURE)
 
 	    save new SensorReader<>(
-			    sensor: livingRoomOccupancyMon,
+			    monitor: livingRoomOccupancyMon,
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
 			    portId: ZWaveModemDevice.PORT_BINARY)
 
 	    save new SensorReader<>(
-			    sensor: livingRoomHumidMod,
+			    monitor: livingRoomHumidMod,
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
 			    portId: ZWaveModemDevice.PORT_MULTILEVEL_HUMIDITY)
 
 	    Trigger dummy1 = save new Trigger<>(
 			    sensor: livingRoomTempMon,
-			    actions: [ new DummyAction(name: 'ACTION TRIGGERED: Living Room Temp > 20'),
-			    new ControlApplianceAction(
-					    name: 'Turn on',
-//					    controlValue: true,
-					    appliance: heatingController,
-//					    portId: "PORT_BINARY_APPLIANCE_POWER",
-					    controlValues: [
-							    new BinaryControlValue(
-									    portId: "PORT_BINARY_APPLIANCE_POWER",
-									    controlValue: true)
-					    ]
-			    )]),
+			    actions: [ new DummyAction(name: 'ACTION TRIGGERED: Living Room Temp > 20') ]),
 			    true
 
 	    save new ValueCondition(
@@ -98,15 +93,38 @@ class BootStrap
 			    triggerValue: 20),
 			    true
 
+	    Bulb southLamp = save new Bulb(deviceId: HueBulbDevice.createDeviceId(hueBridge, "2"))
+
+	    Trigger lightOnMotion = save new Trigger<>(
+			    sensor: livingRoomOccupancyMon,
+			    actions: [ new ControlApplianceAction(
+					    name: 'Turn on',
+//					    controlValue: true,
+					    appliance: southLamp,
+//					    portId: "PORT_BINARY_APPLIANCE_POWER",
+					    controlValues: [
+							    new BinaryControlValue(
+									    portId: "PORT_BINARY_APPLIANCE_POWER",
+									    controlValue: true)
+					    ])],
+			    conditions: [ new BinaryCondition(triggerValue: true) ])
+
+	    Trigger lightOffOnNoMotion = save new Trigger<>(
+			    sensor: livingRoomOccupancyMon,
+			    actions: [ new ControlApplianceAction(
+					    name: 'Turn off',
+					    appliance: southLamp,
+					    controlValues: [
+							    new BinaryControlValue(
+									    portId: "PORT_BINARY_APPLIANCE_POWER",
+									    controlValue: false)
+					    ])],
+			    conditions: [ new BinaryCondition(triggerValue: false) ])
 
 //	    save new BinaryCondition(
-//			    sensor: livingRoomOccupancyMon,
+//			    monitor: livingRoomOccupancyMon,
 //			    triggerValue: true)
 
-	    HueBridge hueBridge = save new HueBridge(
-			    name: "Hue Bridge",
-			    bridgeAddress: "192.168.0.22",
-			    bridgeUsername: StupidSecretsProvider.instance.secrets.hue.bridgeUser)
 
 
 	    deviceManager.refresh()

@@ -1,8 +1,10 @@
 package net.poundex.sentinel.caretaker.environment
 
-import net.poundex.sentinel.caretaker.home.Sensor
+import groovy.transform.CompileStatic
+import net.poundex.sentinel.caretaker.home.Monitor
 
+@CompileStatic
 interface MonitorHandler
 {
-	void publish(Sensor sensor, Object value)
+	public <T> void updateMonitorValue(Monitor<T> monitor, T value)
 }

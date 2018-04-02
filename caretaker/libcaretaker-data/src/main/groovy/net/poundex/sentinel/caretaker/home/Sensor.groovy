@@ -5,10 +5,10 @@ import net.poundex.sentinel.caretaker.environment.Room
 import net.poundex.sentinel.caretaker.home.trigger.Trigger
 
 @CompileStatic
-interface Sensor<T extends SensorPortValue>
+interface Sensor<T extends PortValue>
 {
 	Room getRoom()
-	T readValue(SensorPortValue sensorValue)
+	T readValue(PortValue sensorValue)
 	Object aggregate(Collection<? extends T> portValues)
 	Collection<Trigger> getTriggers()
 }

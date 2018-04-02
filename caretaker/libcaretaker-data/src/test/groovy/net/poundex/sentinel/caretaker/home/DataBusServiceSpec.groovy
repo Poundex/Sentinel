@@ -1,9 +1,9 @@
 package net.poundex.sentinel.caretaker.home
 
-import grails.testing.gorm.DomainUnitTest
+import grails.testing.services.ServiceUnitTest
 import spock.lang.Specification
 
-class AbstractPersistentSensorSpec extends Specification implements DomainUnitTest<AbstractPersistentSensor> {
+class DataBusServiceSpec extends Specification implements ServiceUnitTest<DataBusService>{
 
     def setup() {
     }

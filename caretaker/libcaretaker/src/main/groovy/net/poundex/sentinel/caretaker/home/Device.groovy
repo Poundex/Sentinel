@@ -4,6 +4,4 @@ interface Device
 {
 	String getDeviceId()
 	Hardware getHardware()
-
-	void setControlValues(Map<String, Object> portValues)
 }

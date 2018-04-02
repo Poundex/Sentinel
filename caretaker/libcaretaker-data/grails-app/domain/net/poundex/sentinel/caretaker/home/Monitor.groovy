@@ -9,13 +9,20 @@ import net.poundex.sentinel.caretaker.home.trigger.Trigger
 @ToString(includePackage = false)
 @GrailsCompileStatic
 @EqualsAndHashCode(includes = 'id')
-abstract class AbstractPersistentSensor<T extends SensorPortValue> implements Sensor<T>
+abstract class Monitor<T>// implements Sensor<T>
 {
 	PersistentRoom room
 	List<Trigger> triggers = []
+//	abstract Collection<SensorReader<PortValue<T>>> getSensorReaders()
+	abstract PortValue<T> readPortValue(PortValue<?> portValue)
+	abstract T getMonitorValueForPortValues(Collection<PortValue<T>> portValues)
 
-	static hasMany = [readers: SensorReader, triggers: Trigger]
+	static hasMany = [triggers: Trigger, readers: SensorReader]
 
     static constraints = {
     }
+
+//	static mapping = {
+//		tablePerHierarchy false
+//	}
 }

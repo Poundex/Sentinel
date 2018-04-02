@@ -8,17 +8,17 @@ import java.time.LocalDateTime
 
 @ToString(includePackage = false)
 @CompileStatic
-class ValueSensorValue<T extends Quantity<T>> implements SensorPortValue<T>
+class QuantityPortValue implements PortValue<Quantity>
 {
-	final Device sourceDevice
-	final String sourcePort
-	final Quantity<T> value
+	final Device device
+	final String portId
+	final Quantity value
 	final LocalDateTime reportTime
 
-	ValueSensorValue(Device sourceDevice, String sourcePort, Quantity<T> value, LocalDateTime reportTime)
+	QuantityPortValue(Device device, String portId, Quantity value, LocalDateTime reportTime)
 	{
-		this.sourceDevice = sourceDevice
-		this.sourcePort = sourcePort
+		this.device = device
+		this.portId = portId
 		this.value = value
 		this.reportTime = reportTime
 	}

@@ -17,12 +17,6 @@ class NestHeatingControllerDevice implements HeatingControllerDevice, NestEventT
 		return createDeviceId(hardware)
 	}
 
-	@Override
-	void setControlValues(Map<String, Object> portValues)
-	{
-
-	}
-
 	static String createDeviceId(NestThermostat hardware)
 	{
 		return "nest:${hardware.nestDeviceId}:controller"
@@ -30,6 +24,12 @@ class NestHeatingControllerDevice implements HeatingControllerDevice, NestEventT
 
 	@Override
 	void handleEvent(NestPayload nestPayload)
+	{
+
+	}
+
+	@Override
+	void setPortValues(Map<String, Object> portValues)
 	{
 
 	}

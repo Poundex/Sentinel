@@ -1,9 +1,9 @@
 package net.poundex.sentinel.caretaker.home
 
-import grails.testing.services.ServiceUnitTest
+import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-class SensorBusServiceSpec extends Specification implements ServiceUnitTest<SensorBusService>{
+class QuantityMonitorSpec extends Specification implements DomainUnitTest<QuantityMonitor> {
 
     def setup() {
     }

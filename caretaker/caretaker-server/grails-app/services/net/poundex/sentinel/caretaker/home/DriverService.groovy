@@ -3,10 +3,12 @@ package net.poundex.sentinel.caretaker.home
 class DriverService implements DriverManager
 {
 	private final Set<Driver> driverRegistry
+	private final DataBus dataBus
 
-	DriverService(Collection<Driver> drivers)
+	DriverService(Collection<Driver> drivers, DataBus dataBus)
 	{
 		this.driverRegistry = drivers.toSet()
+		this.dataBus = dataBus
 	}
 
 //	@Override
@@ -15,8 +17,12 @@ class DriverService implements DriverManager
 //		driverRegistry << driver
 //	}
 
-	Set<Driver> getRegisteredDrivers()
+	void createDevices(DeviceManager deviceManager)
 	{
-		return driverRegistry.asImmutable()
+		AbstractPersistentHardware.list().each { hw ->
+			driverRegistry.each { d ->
+				d.createDevices(hw, deviceManager, dataBus)
+			}
+		}
 	}
 }

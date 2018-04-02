@@ -3,19 +3,14 @@ package net.poundex.sentinel.caretaker.home
 import grails.compiler.GrailsCompileStatic
 
 @GrailsCompileStatic
-class SensorReader<T extends SensorPortValue>
+class SensorReader<T>
 {
 	String deviceId
 	String portId
-	AbstractPersistentSensor<T> sensor
+	Monitor<T> monitor
 
-	static belongsTo = [sensor: AbstractPersistentSensor]
+	static belongsTo = [monitor: Monitor]
 
     static constraints = {
     }
-
-	T readValue(SensorPortValue sensorValue)
-	{
-		return sensor.readValue(sensorValue)
-	}
 }

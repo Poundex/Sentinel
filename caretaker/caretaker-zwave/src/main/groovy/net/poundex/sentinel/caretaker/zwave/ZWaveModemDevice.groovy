@@ -11,7 +11,6 @@ import com.whizzosoftware.wzwave.node.generic.MultilevelSensor
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import net.poundex.sentinel.caretaker.home.*
-import si.uom.NonSI
 import systems.uom.common.USCustomary
 import tec.units.indriya.quantity.Quantities
 import tec.units.indriya.unit.BaseUnit
@@ -35,13 +34,15 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 	private final Map<Byte, ZWaveNodeDevice> nodes = [:]
 	private final ZWaveController zWaveController
 	private final DeviceManager deviceManager
+	private final DataBus dataBus
 
-	ZWaveModemDevice(ZWaveModem hardware, DeviceManager deviceManager)
+	ZWaveModemDevice(ZWaveModem hardware, DeviceManager deviceManager, DataBus dataBus)
 	{
 		this.hardware = hardware
 		this.zWaveController = new NettyZWaveController(hardware.modemDevice,
 				Files.createTempDirectory("zwavetmp").toFile())
 		this.deviceManager = deviceManager
+		this.dataBus = dataBus
 	}
 
 	void start()
@@ -59,12 +60,6 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 	String getDeviceId()
 	{
 		return createDeviceId(hardware)
-	}
-
-	@Override
-	void setControlValues(Map<String, Object> portValues)
-	{
-
 	}
 
 	static String createDeviceId(ZWaveModem controller)
@@ -101,7 +96,7 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 			{
 				case MultilevelSensorCommandClass:
 					MultilevelSensorCommandClass ccc  = (MultilevelSensorCommandClass) cc
-					deviceManager.sensorBus.publish(new ValueSensorValue(
+					dataBus.announcePortValue(new QuantityPortValue(
 							nodeDevice,
 							getSourcePortForMultilevelType(ccc.type),
 							Quantities.getQuantity(ccc.values.first(), getUnit(ccc.scale)),
@@ -109,8 +104,8 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 					break
 				case BinarySensorCommandClass:
 					BinarySensorCommandClass ccc = (BinarySensorCommandClass) cc
-					deviceManager.sensorBus.publish(
-							new BinarySensorValue(nodeDevice, PORT_BINARY, ! ccc.isIdle, now))
+					dataBus.announcePortValue(
+							new BinaryPortValue(nodeDevice, PORT_BINARY, ! ccc.isIdle, now))
 					break
 			}
 		}

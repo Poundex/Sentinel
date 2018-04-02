@@ -3,7 +3,7 @@ package net.poundex.sentinel.caretaker.home
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-class ValueSensorSpec extends Specification implements DomainUnitTest<ValueSensor> {
+class MonitorSpec extends Specification implements DomainUnitTest<Monitor> {
 
     def setup() {
     }

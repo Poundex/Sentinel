@@ -6,12 +6,12 @@ class DeviceService implements DeviceManager
 {
 	private final Map<String, Device> deviceRegistry = [:]
 	private final DriverService driverService
-	final SensorBusService sensorBus
+//	final DataBus sensorBus
 
-	DeviceService(DriverService driverService, SensorBusService sensorBus)
+	DeviceService(DriverService driverService)
 	{
 		this.driverService = driverService
-		this.sensorBus = sensorBus
+//		this.sensorBus = sensorBus
 	}
 
 	@Override
@@ -26,13 +26,13 @@ class DeviceService implements DeviceManager
 	@Override
 	void refresh()
 	{
-		Collection<Hardware> hardware = AbstractPersistentHardware.list()
+//		Collection<Hardware> hardware = AbstractPersistentHardware.list()
 		deviceRegistry.clear()
-		driverService.registeredDrivers.each { driver ->
-			hardware.each { hw ->
-				driver.createDevices(hw, this)
-			}
-		}
+//		driverService.registeredDrivers.each { driver ->
+//			hardware.each { hw ->
+//				driver.createDevices(hw, this)
+//			}
+		driverService.createDevices(this)
 	}
 
 	@Override

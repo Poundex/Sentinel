@@ -7,6 +7,7 @@ import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
 import net.poudnex.sentinel.caretaker.home.lighting.hue.HueBridgeClient
 import net.poudnex.sentinel.caretaker.home.lighting.hue.HueBulbDevice
+import net.poundex.sentinel.caretaker.home.DataBus
 import net.poundex.sentinel.caretaker.home.DeviceManager
 import net.poundex.sentinel.caretaker.home.Driver
 import net.poundex.sentinel.caretaker.home.Hardware
@@ -16,7 +17,7 @@ import net.poundex.sentinel.caretaker.ligting.hue.HueBridge
 class HueDriverService implements Driver
 {
 	@Override
-	void createDevices(Hardware hardware, DeviceManager deviceManager)
+	void createDevices(Hardware hardware, DeviceManager deviceManager, DataBus dataBus)
 	{
 		if( ! (hardware instanceof HueBridge))
 			return

@@ -2,10 +2,10 @@ package net.poundex.sentinel.caretaker.home
 
 import java.time.LocalDateTime
 
-interface SensorPortValue<T>
+interface PortValue<T>
 {
-	Device getSourceDevice()
-	String getSourcePort()
+	Device getDevice()
+	String getPortId()
 	T getValue()
 	LocalDateTime getReportTime()
 }

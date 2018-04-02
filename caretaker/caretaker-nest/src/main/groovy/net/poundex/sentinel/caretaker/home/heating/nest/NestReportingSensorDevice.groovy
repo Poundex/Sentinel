@@ -3,8 +3,8 @@ package net.poundex.sentinel.caretaker.home.heating.nest
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import net.poundex.sentinel.caretaker.home.ReportingSensorDevice
-import net.poundex.sentinel.caretaker.home.SensorBus
-import net.poundex.sentinel.caretaker.home.ValueSensorValue
+import net.poundex.sentinel.caretaker.home.DataBus
+import net.poundex.sentinel.caretaker.home.QuantityPortValue
 import systems.uom.common.USCustomary
 import tec.units.indriya.quantity.Quantities
 import tec.units.indriya.unit.Units
@@ -21,12 +21,12 @@ class NestReportingSensorDevice implements ReportingSensorDevice, NestEventTarge
 	static final Set<String> PORTS = [ PORT_TEMPERATURE_C, PORT_TEMPERATURE_F, PORT_HUMIDITY ].toSet().asImmutable()
 
 	final NestThermostat hardware
-	private final SensorBus sensorBus
+	private final DataBus dataBus
 
-	NestReportingSensorDevice(NestThermostat hardware, SensorBus sensorBus)
+	NestReportingSensorDevice(NestThermostat hardware, DataBus dataBus)
 	{
 		this.hardware = hardware
-		this.sensorBus = sensorBus
+		this.dataBus = dataBus
 	}
 
 	@Override
@@ -43,17 +43,17 @@ class NestReportingSensorDevice implements ReportingSensorDevice, NestEventTarge
 	@Override
 	void handleEvent(NestPayload nestPayload)
 	{
-		sensorBus.publish(new ValueSensorValue(
+		dataBus.announcePortValue(new QuantityPortValue(
 				this,
 				PORT_TEMPERATURE_C,
 				Quantities.getQuantity(nestPayload.data.ambientTemperatureC, Units.CELSIUS),
 				LocalDateTime.now()))
-		sensorBus.publish(new ValueSensorValue(
+		dataBus.announcePortValue(new QuantityPortValue(
 				this,
 				PORT_TEMPERATURE_F,
 				Quantities.getQuantity(nestPayload.data.ambientTemperatureC, USCustomary.FAHRENHEIT),
 				LocalDateTime.now()))
-		sensorBus.publish(new ValueSensorValue(
+		dataBus.announcePortValue(new QuantityPortValue(
 				this,
 				PORT_HUMIDITY,
 				Quantities.getQuantity(nestPayload.data.humidity, Units.PERCENT),
