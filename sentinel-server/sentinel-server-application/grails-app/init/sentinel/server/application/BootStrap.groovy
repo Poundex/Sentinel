@@ -55,7 +55,7 @@ class BootStrap
 
 	    QuantityMonitor livingRoomTempMon = save new QuantityMonitor(room: livingRoom)
 	    QuantityMonitor livingRoomHumidMod = save new QuantityMonitor(room: livingRoom)
-	    BinaryMonitor livingRoomOccupancyMon = save new BinaryMonitor(room: livingRoom)
+	    BinaryMonitor occupancyMon = save new BinaryMonitor(room: livingRoom)
 
 	    save new SensorReader(
 			    monitor: livingRoomTempMon,
@@ -73,7 +73,7 @@ class BootStrap
 			    portId: ZWaveModemDevice.PORT_MULTILEVEL_TEMPERATURE)
 
 	    save new SensorReader<>(
-			    monitor: livingRoomOccupancyMon,
+			    monitor: occupancyMon,
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
 			    portId: ZWaveModemDevice.PORT_BINARY)
 
@@ -95,13 +95,21 @@ class BootStrap
 
 	    Bulb southLamp = save new Bulb(deviceId: HueBulbDevice.createDeviceId(hueBridge, "2"))
 
+		Bulb bedroomCeiling = save new Bulb(deviceId: HueBulbDevice.createDeviceId(hueBridge, "3"))
+		Bulb bedroomLamp = save new Bulb(deviceId: HueBulbDevice.createDeviceId(hueBridge, "7"))
+
 	    Trigger lightOnMotion = save new Trigger<>(
-			    sensor: livingRoomOccupancyMon,
+			    sensor: occupancyMon,
 			    actions: [ new ControlApplianceAction(
 					    name: 'Turn on',
-//					    controlValue: true,
-					    appliance: southLamp,
-//					    portId: "PORT_BINARY_APPLIANCE_POWER",
+					    appliance: bedroomCeiling,
+					    controlValues: [
+							    new BinaryControlValue(
+									    portId: "PORT_BINARY_APPLIANCE_POWER",
+									    controlValue: true)
+					    ]), new ControlApplianceAction(
+					    name: 'Turn on',
+					    appliance: bedroomLamp,
 					    controlValues: [
 							    new BinaryControlValue(
 									    portId: "PORT_BINARY_APPLIANCE_POWER",
@@ -110,10 +118,17 @@ class BootStrap
 			    conditions: [ new BinaryCondition(triggerValue: true) ])
 
 	    Trigger lightOffOnNoMotion = save new Trigger<>(
-			    sensor: livingRoomOccupancyMon,
+			    sensor: occupancyMon,
 			    actions: [ new ControlApplianceAction(
 					    name: 'Turn off',
-					    appliance: southLamp,
+					    appliance: bedroomLamp,
+					    controlValues: [
+							    new BinaryControlValue(
+									    portId: "PORT_BINARY_APPLIANCE_POWER",
+									    controlValue: false)
+					    ]), new ControlApplianceAction(
+					    name: 'Turn off',
+					    appliance: bedroomCeiling,
 					    controlValues: [
 							    new BinaryControlValue(
 									    portId: "PORT_BINARY_APPLIANCE_POWER",
@@ -121,25 +136,8 @@ class BootStrap
 					    ])],
 			    conditions: [ new BinaryCondition(triggerValue: false) ])
 
-//	    save new BinaryCondition(
-//			    monitor: livingRoomOccupancyMon,
-//			    triggerValue: true)
-
-
-
 	    deviceManager.refresh()
 	    println deviceManager.getDevices()
-
-//	    deviceManager.getDevice(
-//			    HueBulbDevice.createDeviceId(hueBridge, "2"),
-//			    HueBulbDevice
-//	    ).with {
-//		    setControlValues(null, true)
-//		    Thread.startDaemon {
-//			    Thread.sleep(3000)
-//			    setControlValues(null, false)
-//		    }
-//	    }
     }
 
     def destroy = {
