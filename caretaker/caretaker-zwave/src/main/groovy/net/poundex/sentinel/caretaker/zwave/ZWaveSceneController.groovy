@@ -1,12 +1,12 @@
 package net.poundex.sentinel.caretaker.zwave
 
+import groovy.transform.CompileStatic
 import net.poundex.sentinel.caretaker.home.SensorDevice
 
+@CompileStatic
 class ZWaveSceneController extends ZWaveNodeDevice implements SensorDevice
 {
-	static final String PORT_SCENECONTROL_BUTTON_PUSH = "PORT_SCENECONTROL_BUTTON_PUSH"
-	static final String PORT_SCENECONTROL_BUTTON_BEING_HELD = "PORT_SCENECONTROL_BUTTON_BEING_HELD"
-	static final String PORT_SCENECONTROL_BUTTON_RELEASED_AFTER_HOLD = "PORT_SCENECONTROL_BUTTON_RELEASED_AFTER_HOLD"
+	static final String PORT_SCENECONTROL_BUTTON = "PORT_SCENECONTROL_BUTTON"
 
 	ZWaveSceneController(ZWaveModem hardware, byte nodeId)
 	{
@@ -16,6 +16,6 @@ class ZWaveSceneController extends ZWaveNodeDevice implements SensorDevice
 	@Override
 	Set<String> getPorts()
 	{
-		return [ PORT_SCENECONTROL_BUTTON_BEING_HELD, PORT_SCENECONTROL_BUTTON_PUSH, PORT_SCENECONTROL_BUTTON_RELEASED_AFTER_HOLD ]
+		return [ PORT_SCENECONTROL_BUTTON ].toSet()
 	}
 }

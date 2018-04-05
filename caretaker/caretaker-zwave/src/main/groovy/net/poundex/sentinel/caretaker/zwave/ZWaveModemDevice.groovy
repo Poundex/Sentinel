@@ -119,10 +119,10 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 						return
 					dataBus.announcePortValue(
 							new ButtonPushEvent(nodeDevice as SensorDevice,
-									getPortForCentralSceneButton(cscc.sceneCommand),
+									getTriggerTypeForSceneCommand(cscc.sceneCommand),
 									cscc.sceneNumber,
 									cscc.pushCount,
-									LocalDateTime.now()))
+									now))
 					lastSeenSequenceNumber[node.nodeId] = cscc.sequenceNumber
 					break
 			}
@@ -142,17 +142,17 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 		}
 	}
 
-	static String getPortForCentralSceneButton(CentralSceneCommandClass.SceneCommand cmd)
+	static ButtonPushEvent.TriggerType getTriggerTypeForSceneCommand(CentralSceneCommandClass.SceneCommand cmd)
 	{
 
 		switch(cmd)
 		{
 			case CentralSceneCommandClass.SceneCommand.PUSHED:
-				return ZWaveSceneController.PORT_SCENECONTROL_BUTTON_PUSH
+				return ButtonPushEvent.TriggerType.PUSHED
 			case CentralSceneCommandClass.SceneCommand.RELEASED_AFTER_HOLD:
-				return ZWaveSceneController.PORT_SCENECONTROL_BUTTON_RELEASED_AFTER_HOLD
+				return ButtonPushEvent.TriggerType.RELEASED_AFTER_HOLD
 			case CentralSceneCommandClass.SceneCommand.BEING_HELD:
-				return ZWaveSceneController.PORT_SCENECONTROL_BUTTON_BEING_HELD
+				return ButtonPushEvent.TriggerType.BEING_HELD_DOWN
 		}
 	}
 

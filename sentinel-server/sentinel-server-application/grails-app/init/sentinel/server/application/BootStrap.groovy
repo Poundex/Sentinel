@@ -18,6 +18,7 @@ import net.poundex.sentinel.caretaker.home.trigger.ValueCondition
 import net.poundex.sentinel.caretaker.ligting.hue.HueBridge
 import net.poundex.sentinel.caretaker.zwave.ZWaveModem
 import net.poundex.sentinel.caretaker.zwave.ZWaveModemDevice
+import net.poundex.sentinel.caretaker.zwave.ZWaveSceneController
 import net.poundex.sentinel.caretaker.zwave.ZWaveSensorDevice
 import net.poundex.sentinel.server.StupidSecretsProvider
 import org.grails.datastore.gorm.GormEntity
@@ -138,15 +139,28 @@ class BootStrap
 			    conditions: [ new BinaryCondition(triggerValue: false) ])
 
 
-//		save new ButtonMonitor(room: livingRoom,
-//				triggers: [ new ButtonTrigger(
-//						actions: [
-//								new DummyAction(name: "Button push event!")
-//								],
-//				)],
-//				readers: [
-//					new SensorReader(portId: "PORT_BUTTON_POKE", deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 3.byteValue()))
-//				])
+		save new ButtonMonitor(room: livingRoom,
+				triggers: [
+						new ButtonTrigger(
+								buttonNumberOnDevice: 1,
+								triggerType: ButtonPushEvent.TriggerType.PUSHED,
+								actions: [ new DummyAction(name: "Button #1 pushed") ]),
+						new ButtonTrigger(
+								buttonNumberOnDevice: 2,
+								triggerType: ButtonPushEvent.TriggerType.PUSHED,
+								pushCount: 2,
+								actions: [ new DummyAction(name: "Button #2 double pushed") ]),
+						new ButtonTrigger(
+								buttonNumberOnDevice: 3,
+								triggerType: ButtonPushEvent.TriggerType.BEING_HELD_DOWN,
+								actions: [ new DummyAction(name: "Button #3 being held") ]),
+						new ButtonTrigger(
+								buttonNumberOnDevice: 3,
+								triggerType: ButtonPushEvent.TriggerType.RELEASED_AFTER_HOLD,
+								actions: [ new DummyAction(name: "Button #3 released") ] )],
+				readers: [
+					new SensorReader(portId: ZWaveSceneController.PORT_SCENECONTROL_BUTTON, deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 3.byteValue()))
+				])
 
 	    deviceManager.refresh()
 	    println deviceManager.getDevices()

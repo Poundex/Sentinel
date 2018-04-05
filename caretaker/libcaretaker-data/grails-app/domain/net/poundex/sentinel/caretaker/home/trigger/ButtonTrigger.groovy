@@ -21,7 +21,7 @@ class ButtonTrigger extends Trigger
 		ButtonPushEvent bpe = (ButtonPushEvent) object
 		return bpe.buttonId == buttonNumberOnDevice &&
 				bpe.triggerType == triggerType &&
-				(pushCount == null || bpe.pushCount == pushCount)
+				(bpe.pushCount == pushCount || (bpe.pushCount == 1 && pushCount == null))
 	}
 
 	@Override

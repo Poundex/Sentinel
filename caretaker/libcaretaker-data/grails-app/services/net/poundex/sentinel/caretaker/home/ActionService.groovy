@@ -42,7 +42,7 @@ class ActionService
 	private void runDummyAction(DummyAction dummyAction)
 	{
 		pool.execute {
-			log.info("Dummy Action! ${dummyAction}")
+			log.info("Dummy Action! ${dummyAction.name}")
 		}
 	}
 
