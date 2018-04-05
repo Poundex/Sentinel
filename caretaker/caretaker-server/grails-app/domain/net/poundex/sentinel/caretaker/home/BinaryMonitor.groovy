@@ -23,7 +23,7 @@ class BinaryMonitor extends Monitor<Boolean>
 	}
 
 	@Override
-	Boolean getMonitorValueForPortValues(Collection<PortValue<Boolean>> portValues)
+	Boolean getMonitorValueForPortValues(Collection<PortValue<Boolean>> portValues, PortValue<Boolean> triggeringPortValue)
 	{
 		// TODO
 		return portValues.any { it.value }

@@ -21,7 +21,7 @@ class QuantityMonitor extends Monitor<Quantity>
 	}
 
 	@Override
-	Quantity getMonitorValueForPortValues(Collection<PortValue<Quantity>> portValues)
+	Quantity getMonitorValueForPortValues(Collection<PortValue<Quantity>> portValues, PortValue<Quantity> triggeringPortValue)
 	{
 		// TODO
 		return ValueAggregator.AVERAGE.aggregate(portValues)

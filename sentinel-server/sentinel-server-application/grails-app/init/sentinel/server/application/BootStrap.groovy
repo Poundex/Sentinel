@@ -9,7 +9,8 @@ import net.poundex.sentinel.caretaker.home.heating.nest.NestReportingSensorDevic
 import net.poundex.sentinel.caretaker.home.heating.nest.NestThermostat
 import net.poundex.sentinel.caretaker.home.trigger.BinaryCondition
 import net.poundex.sentinel.caretaker.home.trigger.BinaryControlValue
-import net.poundex.sentinel.caretaker.home.trigger.Condition
+import net.poundex.sentinel.caretaker.home.trigger.ButtonTrigger
+import net.poundex.sentinel.caretaker.home.trigger.ConditionalTrigger
 import net.poundex.sentinel.caretaker.home.trigger.ControlApplianceAction
 import net.poundex.sentinel.caretaker.home.trigger.DummyAction
 import net.poundex.sentinel.caretaker.home.trigger.Trigger
@@ -82,8 +83,8 @@ class BootStrap
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
 			    portId: ZWaveModemDevice.PORT_MULTILEVEL_HUMIDITY)
 
-	    Trigger dummy1 = save new Trigger<>(
-			    sensor: livingRoomTempMon,
+	    Trigger dummy1 = save new ConditionalTrigger<>(
+			    monitor: livingRoomTempMon,
 			    actions: [ new DummyAction(name: 'ACTION TRIGGERED: Living Room Temp > 20') ]),
 			    true
 
@@ -98,8 +99,8 @@ class BootStrap
 		Bulb bedroomCeiling = save new Bulb(deviceId: HueBulbDevice.createDeviceId(hueBridge, "3"))
 		Bulb bedroomLamp = save new Bulb(deviceId: HueBulbDevice.createDeviceId(hueBridge, "7"))
 
-	    Trigger lightOnMotion = save new Trigger<>(
-			    sensor: occupancyMon,
+	    Trigger lightOnMotion = save new ConditionalTrigger<>(
+			    monitor: occupancyMon,
 			    actions: [ new ControlApplianceAction(
 					    name: 'Turn on',
 					    appliance: bedroomCeiling,
@@ -117,8 +118,8 @@ class BootStrap
 					    ])],
 			    conditions: [ new BinaryCondition(triggerValue: true) ])
 
-	    Trigger lightOffOnNoMotion = save new Trigger<>(
-			    sensor: occupancyMon,
+	    Trigger lightOffOnNoMotion = save new ConditionalTrigger<>(
+			    monitor: occupancyMon,
 			    actions: [ new ControlApplianceAction(
 					    name: 'Turn off',
 					    appliance: bedroomLamp,
@@ -135,6 +136,17 @@ class BootStrap
 									    controlValue: false)
 					    ])],
 			    conditions: [ new BinaryCondition(triggerValue: false) ])
+
+
+//		save new ButtonMonitor(room: livingRoom,
+//				triggers: [ new ButtonTrigger(
+//						actions: [
+//								new DummyAction(name: "Button push event!")
+//								],
+//				)],
+//				readers: [
+//					new SensorReader(portId: "PORT_BUTTON_POKE", deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 3.byteValue()))
+//				])
 
 	    deviceManager.refresh()
 	    println deviceManager.getDevices()

@@ -32,7 +32,7 @@ class Environment
 		if(previousPortValue == portValue)
 			return
 
-		T newMonitorValue = monitor.getMonitorValueForPortValues(portValuesByDeviceByMonitor[monitor].values())
+		T newMonitorValue = monitor.getMonitorValueForPortValues(portValuesByDeviceByMonitor[monitor].values(), portValue)
 		if(valuesByMonitor[monitor] == newMonitorValue)
 			return
 

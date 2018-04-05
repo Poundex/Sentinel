@@ -53,8 +53,8 @@ dependencies {
     compile group: 'io.netty', name: 'netty-all', version: '4.0.21.Final'
     compile group: 'se.koc', name: 'netty-transport-jserialcomm', version: '1.0.0'
     compile group: 'org.mapdb', name: 'mapdb', version: '1.0.7'
-//    compile "com.whizzosoftware:wzwave:0.0.5-SNAPSHOT"
-    compile 'com.github.whizzosoftware:WZWave:master-SNAPSHOT'
+    compile "com.whizzosoftware:wzwave:0.0.6-SNAPSHOT"
+//    compile 'com.github.whizzosoftware:WZWave:master-SNAPSHOT'
 
     console "org.grails:grails-console"
     profile "org.grails.profiles:rest-api-plugin"

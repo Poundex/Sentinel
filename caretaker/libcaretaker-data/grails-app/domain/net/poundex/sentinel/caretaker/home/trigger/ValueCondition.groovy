@@ -19,7 +19,7 @@ class ValueCondition extends Condition<Double>
 		else if(value instanceof Number)
 			v = (Number) value
 		else
-			return null
+			return false
 
 		return valueTriggerType.isTriggeredBy(triggerValue, v)
 	}

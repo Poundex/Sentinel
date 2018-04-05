@@ -6,12 +6,17 @@ import net.poundex.sentinel.caretaker.home.Monitor
 
 @GrailsCompileStatic
 @EqualsAndHashCode(includes = 'id')
-class Trigger
+abstract class Trigger
 {
-	Monitor sensor
+	Monitor monitor
 	List<Action> actions
 
-	static belongsTo = [sensor: Monitor]
-	static hasMany = [conditions: Condition]
+	static belongsTo = [monitor: Monitor]
 
+	abstract boolean isTriggeredBy(Object object)
+
+	boolean shouldRetrigger()
+	{
+		return false
+	}
 }

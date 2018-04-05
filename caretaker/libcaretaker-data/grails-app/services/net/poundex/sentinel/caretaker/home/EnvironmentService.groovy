@@ -10,7 +10,6 @@ import net.poundex.sentinel.caretaker.home.trigger.Trigger
 class EnvironmentService implements MonitorHandler
 {
 	private final ActionService actionService
-//	private final DataBus dataBus
 
 	private final Map<Trigger, Boolean> alreadyTriggered = [:]
 
@@ -43,20 +42,15 @@ class EnvironmentService implements MonitorHandler
 	{
 		monitor.triggers.each { t ->
 			boolean triggered = alreadyTriggered[t]
-			boolean couldRun = t.conditions.every { c -> c.isTriggeredBy(value) }
+			boolean couldRun = t.isTriggeredBy(value)
 			alreadyTriggered[t] = couldRun
 
-			if(triggered && couldRun)
+			if(triggered && couldRun && ! t.shouldRetrigger())
 				return
 			if( ! couldRun)
 				return
 
-//			t.actions.each {
-//				println "Would run action ${it}"
-//			}
 			t.actions.each(actionService.&runAction)
 		}
 	}
-
-//	void setControlValues(
 }

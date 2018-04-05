@@ -15,7 +15,7 @@ abstract class Monitor<T>// implements Sensor<T>
 	List<Trigger> triggers = []
 //	abstract Collection<SensorReader<PortValue<T>>> getSensorReaders()
 	abstract PortValue<T> readPortValue(PortValue<?> portValue)
-	abstract T getMonitorValueForPortValues(Collection<PortValue<T>> portValues)
+	abstract T getMonitorValueForPortValues(Collection<PortValue<T>> portValues, PortValue<T> triggeringPortValue)
 
 	static hasMany = [triggers: Trigger, readers: SensorReader]
 

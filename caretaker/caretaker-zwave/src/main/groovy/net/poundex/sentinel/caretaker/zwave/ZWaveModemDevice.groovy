@@ -1,6 +1,7 @@
 package net.poundex.sentinel.caretaker.zwave
 
 import com.whizzosoftware.wzwave.commandclass.BinarySensorCommandClass
+import com.whizzosoftware.wzwave.commandclass.CentralSceneCommandClass
 import com.whizzosoftware.wzwave.commandclass.CommandClass
 import com.whizzosoftware.wzwave.commandclass.MultilevelSensorCommandClass
 import com.whizzosoftware.wzwave.controller.ZWaveController
@@ -8,6 +9,7 @@ import com.whizzosoftware.wzwave.controller.netty.NettyZWaveController
 import com.whizzosoftware.wzwave.node.ZWaveEndpoint
 import com.whizzosoftware.wzwave.node.ZWaveNode
 import com.whizzosoftware.wzwave.node.generic.MultilevelSensor
+import com.whizzosoftware.wzwave.node.generic.PortableSceneController
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import net.poundex.sentinel.caretaker.home.*
@@ -35,6 +37,7 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 	private final ZWaveController zWaveController
 	private final DeviceManager deviceManager
 	private final DataBus dataBus
+	private final Map<Byte, Integer> lastSeenSequenceNumber = [:]
 
 	ZWaveModemDevice(ZWaveModem hardware, DeviceManager deviceManager, DataBus dataBus)
 	{
@@ -76,6 +79,9 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 			case MultilevelSensor:
 				nodeDevice = new ZWaveSensorDevice(hardware, zWaveNode.nodeId)
 				break
+			case PortableSceneController:
+				nodeDevice = new ZWaveSceneController(hardware, zWaveNode.nodeId)
+				break
 			default:
 				nodeDevice = new ZWaveNodeDevice(hardware, zWaveNode.nodeId)
 		}
@@ -98,7 +104,7 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 					MultilevelSensorCommandClass ccc  = (MultilevelSensorCommandClass) cc
 					dataBus.announcePortValue(new QuantityPortValue(
 							nodeDevice,
-							getSourcePortForMultilevelType(ccc.type),
+							getPortForMultilevelType(ccc.type),
 							Quantities.getQuantity(ccc.values.first(), getUnit(ccc.scale)),
 							now))
 					break
@@ -107,11 +113,23 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 					dataBus.announcePortValue(
 							new BinaryPortValue(nodeDevice, PORT_BINARY, ! ccc.isIdle, now))
 					break
+				case CentralSceneCommandClass:
+					CentralSceneCommandClass cscc = (CentralSceneCommandClass) cc
+					if(cscc.sequenceNumber <= lastSeenSequenceNumber[node.nodeId])
+						return
+					dataBus.announcePortValue(
+							new ButtonPushEvent(nodeDevice as SensorDevice,
+									getPortForCentralSceneButton(cscc.sceneCommand),
+									cscc.sceneNumber,
+									cscc.pushCount,
+									LocalDateTime.now()))
+					lastSeenSequenceNumber[node.nodeId] = cscc.sequenceNumber
+					break
 			}
 		}
 	}
 
-	static String getSourcePortForMultilevelType(MultilevelSensorCommandClass.Type type)
+	static String getPortForMultilevelType(MultilevelSensorCommandClass.Type type)
 	{
 		switch (type)
 		{
@@ -121,6 +139,20 @@ class ZWaveModemDevice implements Device, ZWaveControllerListenerAdapter
 				return PORT_MULTILEVEL_HUMIDITY
 			default:
 				return "PORT_UNKNOWN"
+		}
+	}
+
+	static String getPortForCentralSceneButton(CentralSceneCommandClass.SceneCommand cmd)
+	{
+
+		switch(cmd)
+		{
+			case CentralSceneCommandClass.SceneCommand.PUSHED:
+				return ZWaveSceneController.PORT_SCENECONTROL_BUTTON_PUSH
+			case CentralSceneCommandClass.SceneCommand.RELEASED_AFTER_HOLD:
+				return ZWaveSceneController.PORT_SCENECONTROL_BUTTON_RELEASED_AFTER_HOLD
+			case CentralSceneCommandClass.SceneCommand.BEING_HELD:
+				return ZWaveSceneController.PORT_SCENECONTROL_BUTTON_BEING_HELD
 		}
 	}
 
