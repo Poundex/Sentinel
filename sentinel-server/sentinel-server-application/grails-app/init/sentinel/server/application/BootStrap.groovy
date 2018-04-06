@@ -7,17 +7,9 @@ import net.poundex.sentinel.caretaker.home.*
 import net.poundex.sentinel.caretaker.home.heating.nest.NestHeatingControllerDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestReportingSensorDevice
 import net.poundex.sentinel.caretaker.home.heating.nest.NestThermostat
-import net.poundex.sentinel.caretaker.home.trigger.BinaryCondition
-import net.poundex.sentinel.caretaker.home.trigger.BinaryControlValue
-import net.poundex.sentinel.caretaker.home.trigger.ButtonTrigger
-import net.poundex.sentinel.caretaker.home.trigger.ConditionalTrigger
-import net.poundex.sentinel.caretaker.home.trigger.ControlApplianceAction
-import net.poundex.sentinel.caretaker.home.trigger.DummyAction
-import net.poundex.sentinel.caretaker.home.trigger.Trigger
-import net.poundex.sentinel.caretaker.home.trigger.ValueCondition
+import net.poundex.sentinel.caretaker.home.trigger.*
 import net.poundex.sentinel.caretaker.ligting.hue.HueBridge
 import net.poundex.sentinel.caretaker.zwave.ZWaveModem
-import net.poundex.sentinel.caretaker.zwave.ZWaveModemDevice
 import net.poundex.sentinel.caretaker.zwave.ZWaveSceneController
 import net.poundex.sentinel.caretaker.zwave.ZWaveSensorDevice
 import net.poundex.sentinel.server.StupidSecretsProvider
@@ -72,17 +64,17 @@ class BootStrap
 	    save new SensorReader<>(
 			    monitor: livingRoomTempMon,
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
-			    portId: ZWaveModemDevice.PORT_MULTILEVEL_TEMPERATURE)
+			    portId: ZWaveSensorDevice.PORT_MULTILEVEL_TEMPERATURE)
 
 	    save new SensorReader<>(
 			    monitor: occupancyMon,
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
-			    portId: ZWaveModemDevice.PORT_BINARY)
+			    portId: ZWaveSensorDevice.PORT_BINARY)
 
 	    save new SensorReader<>(
 			    monitor: livingRoomHumidMod,
 			    deviceId: ZWaveSensorDevice.createDeviceId(zWaveController, 2.byteValue()),
-			    portId: ZWaveModemDevice.PORT_MULTILEVEL_HUMIDITY)
+			    portId: ZWaveSensorDevice.PORT_MULTILEVEL_HUMIDITY)
 
 	    Trigger dummy1 = save new ConditionalTrigger<>(
 			    monitor: livingRoomTempMon,
